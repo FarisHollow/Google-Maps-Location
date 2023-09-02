@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: HomeScreen(),
     );
   }
@@ -35,6 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late final GoogleMapController _googleMapController;
   LocationData? myCurrentLocation;
   StreamSubscription? _locationSubscription;
+  bool isTracking = false;
+
 
 
   void getMyLocation() async {
@@ -60,15 +63,41 @@ class _HomeScreenState extends State<HomeScreen> {
             myCurrentLocation = location;
             print('listening to location $location');
             if (mounted) {
-              setState(() {polylinePoints.add(LatLng(location.latitude ?? 0.0, location.longitude ?? 0.0));
+              setState(() {
+                polylinePoints.add(LatLng(location.latitude ?? 0.0, location.longitude ?? 0.0));
               });
             }
           }
         });
+
+    // Show the Snackbar when tracking starts
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Started tracking'),
+        duration: Duration(seconds: 2), // Adjust the duration as needed
+      ),
+    );
+
+    setState(() {
+      isTracking = true;
+    });
   }
 
   void stopToListenLocation() {
     _locationSubscription?.cancel();
+
+    // Show the Snackbar when tracking stops
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Stopped tracking'),
+        duration: Duration(seconds: 2), // Adjust the duration as needed
+      ),
+    );
+
+    // Update the tracking status
+    setState(() {
+      isTracking = false;
+    });
   }
 
   @override
@@ -81,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Location.instance.changeSettings(
         distanceFilter: 1,
         accuracy: LocationAccuracy.high,
-        interval: 10000
+        interval: 1000
     );
   }
 
@@ -90,10 +119,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Google map screen'),
+        title: const Text('Google map location tracker'),
+        backgroundColor: Colors.teal,
       ),
       body: GoogleMap(
-        initialCameraPosition:  CameraPosition(
+        initialCameraPosition:  const CameraPosition(
           zoom: 5,
           bearing: 30,
           tilt: 10,
@@ -118,13 +148,13 @@ class _HomeScreenState extends State<HomeScreen> {
         mapType: MapType.normal,
         markers: <Marker>{
           Marker(
-              markerId: MarkerId('custom-marker'),
+              markerId: const MarkerId('custom-marker'),
               position: LatLng(
                 myCurrentLocation?.latitude ?? DEFAULT_LATITUDE,
                 myCurrentLocation?.longitude ?? DEFAULT_LONGITUDE,
               ),
               icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-              infoWindow: InfoWindow(title: 'My current Location',
+              infoWindow: InfoWindow(title: 'My Current Location',
                 snippet: "Latitude: ${myCurrentLocation?.latitude}, " " Longitude: ${myCurrentLocation?.longitude}", ),
               draggable: true,
               // draggable: true,
@@ -148,6 +178,22 @@ class _HomeScreenState extends State<HomeScreen> {
               points: polylinePoints
           ),
         },
+        circles: <Circle>{
+          Circle(
+            circleId: CircleId('circle'),
+            center: LatLng(
+              myCurrentLocation?.latitude ?? DEFAULT_LATITUDE,
+              myCurrentLocation?.longitude ?? DEFAULT_LONGITUDE,
+            ),
+            radius: 4,
+            strokeColor: Colors.teal,
+            strokeWidth:2,
+            fillColor: Colors.purple.shade100,
+            onTap: () {
+              print('Tapped on circle');
+            },
+          ),
+        },
 
       ),
       floatingActionButton:   Row(
@@ -155,27 +201,30 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           FloatingActionButton(
             onPressed: () {
-              stopToListenLocation();
+              if (isTracking) {
+                stopToListenLocation();
+              } else {
+                listenToMyLocation();
+              }
             },
-            child: const Icon(Icons.stop_circle_outlined),
+            child: Icon(isTracking ? Icons.stop_circle_outlined : Icons.location_history),
           ),
-          SizedBox(width: 8,),
+          const SizedBox(width: 8,),
           FloatingActionButton(
             onPressed: () {
               getMyLocation();
             },
             child: const Icon(Icons.my_location),
           ),
-          const SizedBox(width: 8,),
-          FloatingActionButton(
-            onPressed: () {
-              listenToMyLocation();
-            },
-            child: const Icon(Icons.location_city_rounded),
-          ),
+
         ],
       ),
 
     );
+  }
+  @override
+  void dispose() {
+    _locationSubscription?.cancel();
+    super.dispose();
   }
 }
