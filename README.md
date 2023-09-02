@@ -1,6 +1,9 @@
 # Google-Maps-Location
-Flutter
+Flutter location tracker
 
-![1](https://github.com/FarisHollow/Google-Maps-Location/assets/102200908/8d829a00-e521-4419-9ca5-b31b98e63517)
+
+![1](https://github.com/FarisHollow/Google-Maps-Location/assets/102200908/0249822d-55fb-4392-9d7c-b076f530e148)
+
+
 
 
