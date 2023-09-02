@@ -6,10 +6,6 @@ import 'package:location/location.dart';
 
 /// API keu - AIzaSyB7w8JhkAHJJkhweXYfp7w_28JRYI6o8zg
 
-/// 1. Marker
-/// 2. buttons
-/// 3. Circle
-/// 4. Polyline
 
 void main() {
   runApp(const MyApp());
@@ -41,18 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
   StreamSubscription? _locationSubscription;
 
 
-<<<<<<< HEAD
   void getMyLocation() async {
     await Location.instance.requestPermission().then((requestedPermission) {
       print(requestedPermission);
-=======
-    // Fetch the initial location.
-    fetchLocation();
-
-    // Start a Timer to fetch location updates every 10 seconds
-    locationTimer = Timer.periodic(Duration(seconds: 10), (timer) {
-      getLocationUpdate();
->>>>>>> be44ca4f0855ecf05a4c87c7c50dc44e2334a005
     });
     await Location.instance.hasPermission().then((permissionStatus)  {
       print(permissionStatus);
