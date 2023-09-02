@@ -37,8 +37,8 @@ class _MapScreenState extends State<MapScreen> {
     // Fetch the initial location.
     fetchLocation();
 
-    // Start a Timer to fetch location updates every 5 seconds
-    locationTimer = Timer.periodic(Duration(seconds: 5), (timer) {
+    // Start a Timer to fetch location updates every 10 seconds
+    locationTimer = Timer.periodic(Duration(seconds: 10), (timer) {
       getLocationUpdate();
     });
   }
