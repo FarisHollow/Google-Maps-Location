@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Started tracking'),
-        duration: Duration(seconds: 2), // Adjust the duration as needed
+        duration: Duration(seconds: 2),
       ),
     );
 
@@ -86,11 +86,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void stopToListenLocation() {
     _locationSubscription?.cancel();
 
-    // Show the Snackbar when tracking stops
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Stopped tracking'),
-        duration: Duration(seconds: 2), // Adjust the duration as needed
+        duration: Duration(seconds: 2),
       ),
     );
 
@@ -180,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         circles: <Circle>{
           Circle(
-            circleId: CircleId('circle'),
+            circleId: const CircleId('circle'),
             center: LatLng(
               myCurrentLocation?.latitude ?? DEFAULT_LATITUDE,
               myCurrentLocation?.longitude ?? DEFAULT_LONGITUDE,
